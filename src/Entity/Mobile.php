@@ -13,6 +13,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MobileRepository::class)]
 #[ORM\EntityListeners(['App\EntityListener\MobileListener'])]
+#[ApiResource(
+    operations: [
+        new Get(normalizationContext: ['groups' => ['mobileDetails']]),
+        new GetCollection(paginationItemsPerPage: 10, paginationClientItemsPerPage: true, normalizationContext: ['groups' => ['mobileList']])
+    ]
+)]
 class Mobile
 {
     #[ORM\Id]
@@ -22,28 +28,35 @@ class Mobile
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Groups(['mobileDetails','mobileList'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Groups(['mobileDetails','mobileList'])]
     private ?string $brand = null;
 
     #[ORM\Column]
     #[Assert\Positive]
+    #[Groups(['mobileDetails'])]
     private ?string $price = null;
 
     #[ORM\Column]
+    #[Groups(['mobileDetails'])]
     private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['mobileDetails'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Groups(['mobileDetails'])]
     private ?string $storage = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank]
+    #[Groups(['mobileDetails'])]
     private ?string $description = null;
 
     public function __construct()
