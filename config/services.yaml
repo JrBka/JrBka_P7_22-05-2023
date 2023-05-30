@@ -26,3 +26,10 @@ services:
     App\EntityListener\:
         resource: '../src/EntityListener'
         tags: [ 'doctrine.orm.entity_listener' ]
+
+
+    App\EventListener\:
+        resource: '../src/EventListener'
+        arguments: [ '@request_stack' ]
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }

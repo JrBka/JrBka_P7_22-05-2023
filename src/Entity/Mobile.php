@@ -16,7 +16,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     operations: [
         new Get(normalizationContext: ['groups' => ['mobileDetails']]),
-        new GetCollection(paginationItemsPerPage: 10, paginationClientItemsPerPage: true, normalizationContext: ['groups' => ['mobileList']])
+        new GetCollection(paginationItemsPerPage: 10, paginationClientItemsPerPage: true, normalizationContext: ['groups' => ['mobilesList']])
+    ],
+    cacheHeaders: [
+        'max_age' => 3600
     ]
 )]
 class Mobile
@@ -28,16 +31,16 @@ class Mobile
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    #[Groups(['mobileDetails','mobileList'])]
+    #[Groups(['mobileDetails','mobilesList'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    #[Groups(['mobileDetails','mobileList'])]
+    #[Groups(['mobileDetails','mobilesList'])]
     private ?string $brand = null;
 
     #[ORM\Column]
-    #[Assert\Positive]
+    #[Assert\NotBlank]
     #[Groups(['mobileDetails'])]
     private ?string $price = null;
 

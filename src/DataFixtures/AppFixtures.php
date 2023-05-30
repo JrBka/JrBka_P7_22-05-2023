@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Client;
 use App\Entity\Mobile;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -11,11 +12,20 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $admin = new User();
-        $admin->setRoles(["ROLE_ADMIN"])
-            ->setEmail('bilmoAPI@admin.com')
-            ->setPassword('$2y$13$3RUCF4.19GjbkJXuuR1Wg.ZKV4ul4pLHu6biON.qxQjunDjfZLIsW');
-        $manager->persist($admin);
+        $client = new Client();
+        $client->setRoles(["ROLE_ADMIN"])
+            ->setEmail('mobile-shop@admin.com')
+            ->setPassword('$2y$13$0Su4E0I2Cii1/mP06ZXKoOK07Xx97tY2rSYu6O3wc32rpZ64qp5/S');
+        $manager->persist($client);
+
+        for ($i = 1; $i < 26; $i++){
+            $user = new User();
+            $user->setRoles(["ROLE_USER"])
+                ->setEmail('user'.$i.'@gmail.com')
+                ->setPassword('$2y$13$l6ErF9BvYu4VF/yGS0nviugMZSgyqPuou84j00FVUQ8fPqNfDK0GS')
+                ->setClient($client);
+            $manager->persist($user);
+        }
 
         for ($i = 1; $i < 11; $i++){
             $mobile = new Mobile();
