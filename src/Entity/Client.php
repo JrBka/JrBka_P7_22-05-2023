@@ -23,11 +23,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     operations: [
         new Get(normalizationContext: ['groups'=> ['clientDetails']]),
-        new GetCollection(normalizationContext: ['groups'=> ['clientsList']]),
+        new GetCollection(paginationItemsPerPage: 10, paginationClientItemsPerPage: true, normalizationContext: ['groups'=> ['clientsList']]),
         new Patch(normalizationContext: ['groups'=> ['clientAuthorisation']], denormalizationContext: ['groups'=> ['clientAuthorisation']]),
         new Post(normalizationContext: ['groups'=> ['clientDetails']], denormalizationContext: ['groups'=> ['clientDetailsForPost']],priority: 10),
         new Put(normalizationContext: ['groups'=> ['clientDetails']], denormalizationContext: ['groups'=> ['clientDetailsForPut']]),
-        new Delete(),
+        new Delete()
     ],
     security: "is_granted('ROLE_SUPER_ADMIN')"
 )]

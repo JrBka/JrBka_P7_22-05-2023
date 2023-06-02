@@ -27,6 +27,7 @@ class Mobile
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['mobileDetails','mobilesList'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
