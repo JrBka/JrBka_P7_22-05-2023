@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
@@ -20,6 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Get(normalizationContext: ['groups'=> ['userDetails']], security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN')"),
         new GetCollection(paginationItemsPerPage: 10, paginationClientItemsPerPage: true, normalizationContext: ['groups' => ['usersList']], security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN')"),
         new Post(normalizationContext: ['groups'=> ['userDetails']], denormalizationContext: ['groups'=> ['userDetailsForPost']], security: "is_granted('ROLE_ADMIN')"),
+        new Delete(security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN')")
     ]
 )]
 #[UniqueEntity('email')]
