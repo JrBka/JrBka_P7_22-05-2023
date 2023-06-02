@@ -3,43 +3,83 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
+#[ApiResource(
+    operations: [
+        new Get(normalizationContext: ['groups'=> ['clientDetails']]),
+        new GetCollection(normalizationContext: ['groups'=> ['clientsList']]),
+        new Patch(normalizationContext: ['groups'=> ['clientAuthorisation']], denormalizationContext: ['groups'=> ['clientAuthorisation']]),
+        new Post(normalizationContext: ['groups'=> ['clientDetails']], denormalizationContext: ['groups'=> ['clientDetailsForPost']],priority: 10),
+        new Put(normalizationContext: ['groups'=> ['clientDetails']], denormalizationContext: ['groups'=> ['clientDetailsForPut']]),
+        new Delete(),
+    ],
+    security: "is_granted('ROLE_SUPER_ADMIN')"
+)]
+#[UniqueEntity('email')]
 class Client implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['clientDetails','clientsList'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\Email]
+    #[Groups(['clientDetails','clientDetailsForPut','clientDetailsForPost','clientsList'])]
     private ?string $email = null;
 
     #[ORM\Column]
-    private array $roles = [];
+    #[Assert\NotBlank]
+    #[Groups(['clientDetails','clientDetailsForPut'])]
+    private array $roles = ['ROLE_ADMIN'];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\Regex(['pattern' => '/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?([^\w\s]|[_])).{8,}$/',
+        'match' => true,
+        'message' => 'The password must contain at least eight characters, including upper and lower case letters, a number and a symbol'
+    ])]
+    #[Groups(['clientDetails','clientDetailsForPut','clientDetailsForPost'])]
     private ?string $password = null;
 
     #[ORM\Column]
+    #[Assert\DateTime]
+    #[Groups(['clientDetails'])]
     private \DateTimeImmutable $createdAt;
 
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: User::class, orphanRemoval: true)]
+    #[Groups(['clientDetails'])]
     private Collection $users;
+
+    #[ORM\Column()]
+    #[Assert\DateTime]
+    #[Groups(['clientAuthorisation','clientDetails','clientsList'])]
+    private \DateTimeImmutable $authorizedUntil ;
 
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->users = new ArrayCollection();
+        $this->authorizedUntil = new \DateTimeImmutable('+30days');
     }
 
     /**
@@ -157,6 +197,18 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
                 $user->setClient(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAuthorizedUntil(): ?\DateTimeInterface
+    {
+        return $this->authorizedUntil;
+    }
+
+    public function setAuthorizedUntil(\DateTimeInterface $authorizedUntil): self
+    {
+        $this->authorizedUntil = $authorizedUntil;
 
         return $this;
     }

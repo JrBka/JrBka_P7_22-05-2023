@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\GetCollection;
 use App\Repository\MobileRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -18,10 +19,9 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Get(normalizationContext: ['groups' => ['mobileDetails']]),
         new GetCollection(paginationItemsPerPage: 10, paginationClientItemsPerPage: true, normalizationContext: ['groups' => ['mobilesList']])
     ],
-    cacheHeaders: [
-        'max_age' => 3600
-    ]
+    security: "is_granted('ROLE_USER')"
 )]
+#[UniqueEntity('name')]
 class Mobile
 {
     #[ORM\Id]
