@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -18,9 +19,11 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new Get(normalizationContext: ['groups'=> ['userDetails']], security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN')"),
         new GetCollection(paginationItemsPerPage: 10, paginationClientItemsPerPage: true, normalizationContext: ['groups' => ['usersList']], security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN')"),
+        new Post(normalizationContext: ['groups'=> ['userDetails']], denormalizationContext: ['groups'=> ['userDetailsForPost']], security: "is_granted('ROLE_ADMIN')"),
     ]
 )]
 #[UniqueEntity('email')]
+#[ORM\EntityListeners(['App\EntityListener\UserListener'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -31,7 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\Email]
-    #[Groups(['usersList', 'userDetails'])]
+    #[Groups(['usersList', 'userDetails','userDetailsForPost'])]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -47,19 +50,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         'match' => true,
         'message' => 'The password must contain at least eight characters, including upper and lower case letters, a number and a symbol'
     ])]
-    #[Groups(['userDetails'])]
+    #[Groups(['userDetails','userDetailsForPost'])]
     private ?string $password = null;
 
     #[ORM\Column]
-    #[Assert\DateTime]
     #[Groups(['userDetails'])]
     private \DateTimeImmutable $createdAt;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Assert\NotNull]
     #[Groups(['userDetails'])]
-    private ?Client $client = null;
+    private ?Client $client;
 
 
     public function __construct()

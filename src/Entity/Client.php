@@ -25,7 +25,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Get(normalizationContext: ['groups'=> ['clientDetails']]),
         new GetCollection(paginationItemsPerPage: 10, paginationClientItemsPerPage: true, normalizationContext: ['groups'=> ['clientsList']]),
         new Patch(normalizationContext: ['groups'=> ['clientAuthorisation']], denormalizationContext: ['groups'=> ['clientAuthorisation']]),
-        new Post(normalizationContext: ['groups'=> ['clientDetails']], denormalizationContext: ['groups'=> ['clientDetailsForPost']],priority: 10),
+        new Post(normalizationContext: ['groups'=> ['clientDetails']], denormalizationContext: ['groups'=> ['clientDetailsForPost']]),
         new Put(normalizationContext: ['groups'=> ['clientDetails']], denormalizationContext: ['groups'=> ['clientDetailsForPut']]),
         new Delete()
     ],
@@ -62,7 +62,6 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column]
-    #[Assert\DateTime]
     #[Groups(['clientDetails'])]
     private \DateTimeImmutable $createdAt;
 
@@ -71,7 +70,6 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $users;
 
     #[ORM\Column()]
-    #[Assert\DateTime]
     #[Groups(['clientAuthorisation','clientDetails','clientsList'])]
     private \DateTimeImmutable $authorizedUntil ;
 
