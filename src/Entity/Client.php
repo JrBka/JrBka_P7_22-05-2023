@@ -32,6 +32,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     security: "is_granted('ROLE_SUPER_ADMIN')"
 )]
 #[UniqueEntity('email')]
+#[ORM\EntityListeners(['App\EntityListener\ClientListener'])]
 class Client implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -41,6 +42,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank]
     #[Assert\Email]
     #[Groups(['clientDetails','clientDetailsForPut','clientDetailsForPost','clientsList'])]
     private ?string $email = null;
@@ -50,16 +52,16 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['clientDetails','clientDetailsForPut'])]
     private array $roles = ['ROLE_ADMIN'];
 
-    /**
-     * @var string The hashed password
-     */
     #[ORM\Column]
+    private ?string $password = 'apiPassword';
+
+    #[Assert\NotBlank]
     #[Assert\Regex(['pattern' => '/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?([^\w\s]|[_])).{8,}$/',
         'match' => true,
         'message' => 'The password must contain at least eight characters, including upper and lower case letters, a number and a symbol'
     ])]
-    #[Groups(['clientDetails','clientDetailsForPut','clientDetailsForPost'])]
-    private ?string $password = null;
+    #[Groups(['userDetails','userDetailsForPost'])]
+    private ?string $plainPassword = null;
 
     #[ORM\Column]
     #[Groups(['clientDetails'])]
@@ -204,10 +206,21 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->authorizedUntil;
     }
 
-    public function setAuthorizedUntil(\DateTimeInterface $authorizedUntil): self
+    public function setAuthorizedUntil(\DateTimeImmutable $authorizedUntil): self
     {
         $this->authorizedUntil = $authorizedUntil;
 
+        return $this;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
         return $this;
     }
 }

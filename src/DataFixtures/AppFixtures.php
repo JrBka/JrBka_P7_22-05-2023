@@ -15,37 +15,38 @@ class AppFixtures extends Fixture
     {
         $manager1 = new Manager();
         $manager1->setEmail('BileMo@super_admin.com')
-            ->setPassword('$2y$13$hsJdf98mrBE1nEQS7Dd1mOSQmvY5aVwENroZzbAnffcmr7Pv1uOoW');
+            ->setPlainPassword('Password123$')
+            ->setRoles(["ROLE_SUPER_ADMIN"]);
         $manager->persist($manager1);
 
         $client1 = new Client();
-        $client1->setRoles(["ROLE_ADMIN"])
-            ->setEmail('mobile-shop@admin.com')
-            ->setPassword('$2y$13$0Su4E0I2Cii1/mP06ZXKoOK07Xx97tY2rSYu6O3wc32rpZ64qp5/S')
+        $client1->setEmail('mobile-shop@admin.com')
+            ->setPlainPassword('Password123$')
+            ->setRoles(["ROLE_ADMIN"])
             ->setAuthorizedUntil(new \DateTimeImmutable('+30days'));
         $manager->persist($client1);
 
         $client2 = new Client();
-        $client2->setRoles(["ROLE_ADMIN"])
-            ->setEmail('mobileAvenue@admin.com')
-            ->setPassword('$2y$13$aHg94vrwoic9W6CROE8d1eF..TuUXtNZHywt2/mewY5bzwewuVtMa')
+        $client2->setEmail('mobileAvenue@admin.com')
+            ->setPlainPassword('Password123$')
+            ->setRoles(["ROLE_ADMIN"])
             ->setAuthorizedUntil(new \DateTimeImmutable('+30days'));
         $manager->persist($client2);
 
         for ($i = 1; $i < 26; $i++){
             $user = new User();
-            $user->setRoles(["ROLE_USER"])
-                ->setEmail('user'.$i.'@gmail.com')
-                ->setPassword('$2y$13$l6ErF9BvYu4VF/yGS0nviugMZSgyqPuou84j00FVUQ8fPqNfDK0GS')
+            $user->setEmail('user'.$i.'@gmail.com')
+                ->setPlainPassword('Password123$')
+                ->setRoles(["ROLE_USER"])
                 ->setClient($client1);
             $manager->persist($user);
         }
 
         for ($i = 100; $i < 116; $i++){
             $user = new User();
-            $user->setRoles(["ROLE_USER"])
-                ->setEmail('user'.$i.'@gmail.com')
-                ->setPassword('$2y$13$l6ErF9BvYu4VF/yGS0nviugMZSgyqPuou84j00FVUQ8fPqNfDK0GS')
+            $user->setEmail('user'.$i.'@gmail.com')
+                ->setPlainPassword('Password123$')
+                ->setRoles(["ROLE_USER"])
                 ->setClient($client2);
             $manager->persist($user);
         }

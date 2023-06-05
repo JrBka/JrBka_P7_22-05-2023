@@ -3,8 +3,12 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\MobileRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,10 +20,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\EntityListeners(['App\EntityListener\MobileListener'])]
 #[ApiResource(
     operations: [
-        new Get(normalizationContext: ['groups' => ['mobileDetails']]),
-        new GetCollection(paginationItemsPerPage: 10, paginationClientItemsPerPage: true, normalizationContext: ['groups' => ['mobilesList']])
-    ],
-    security: "is_granted('ROLE_USER')"
+        new Get(normalizationContext: ['groups' => ['mobileDetails']], security: "is_granted('ROLE_USER') or is_granted('ROLE_ADMIN')"),
+        new GetCollection(paginationItemsPerPage: 10, paginationClientItemsPerPage: true, normalizationContext: ['groups' => ['mobilesList']], security: "is_granted('ROLE_USER') or is_granted('ROLE_ADMIN')"),
+        new Post(normalizationContext: ['groups'=> ['mobileDetails']], denormalizationContext: ['groups' => ['mobileDetailsForPostPatchPut']], security: "is_granted('ROLE_SUPER_ADMIN')"),
+        new Patch(normalizationContext: ['groups'=> ['mobileDetails']], denormalizationContext: ['groups' => ['mobileDetailsForPostPatchPut']], security: "is_granted('ROLE_SUPER_ADMIN')"),
+        new Put( normalizationContext: ['groups'=> ['mobileDetails']], denormalizationContext: ['groups' => ['mobileDetailsForPostPatchPut']], security: "is_granted('ROLE_SUPER_ADMIN')"),
+        new Delete(security: "is_granted('ROLE_SUPER_ADMIN')")
+    ]
 )]
 #[UniqueEntity('name')]
 class Mobile
@@ -32,17 +39,17 @@ class Mobile
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    #[Groups(['mobileDetails','mobilesList'])]
+    #[Groups(['mobileDetails','mobilesList','mobileDetailsForPostPatchPut'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    #[Groups(['mobileDetails','mobilesList'])]
+    #[Groups(['mobileDetails','mobilesList','mobileDetailsForPostPatchPut'])]
     private ?string $brand = null;
 
     #[ORM\Column]
     #[Assert\NotBlank]
-    #[Groups(['mobileDetails'])]
+    #[Groups(['mobileDetails','mobileDetailsForPostPatchPut'])]
     private ?string $price = null;
 
     #[ORM\Column]
@@ -55,12 +62,12 @@ class Mobile
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
-    #[Groups(['mobileDetails'])]
+    #[Groups(['mobileDetails','mobileDetailsForPostPatchPut'])]
     private ?string $storage = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank]
-    #[Groups(['mobileDetails'])]
+    #[Groups(['mobileDetails','mobileDetailsForPostPatchPut'])]
     private ?string $description = null;
 
     public function __construct()

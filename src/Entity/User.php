@@ -36,6 +36,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\Email]
+    #[Assert\NotBlank]
     #[Groups(['usersList', 'userDetails','userDetailsForPost'])]
     private ?string $email = null;
 
@@ -44,16 +45,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['userDetails'])]
     private array $roles = ['ROLE_USER'];
 
-    /**
-     * @var string The hashed password
-     */
+
     #[ORM\Column]
+    private ?string $password = 'apiPassword';
+
+    #[Assert\NotBlank]
     #[Assert\Regex(['pattern' => '/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?([^\w\s]|[_])).{8,}$/',
         'match' => true,
         'message' => 'The password must contain at least eight characters, including upper and lower case letters, a number and a symbol'
     ])]
     #[Groups(['userDetails','userDetailsForPost'])]
-    private ?string $password = null;
+    private ?string $plainPassword = null;
 
     #[ORM\Column]
     #[Groups(['userDetails'])]
@@ -169,6 +171,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->client = $client;
 
+        return $this;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
         return $this;
     }
 }

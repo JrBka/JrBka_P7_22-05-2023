@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ManagerRepository::class)]
+#[ORM\EntityListeners(['App\EntityListener\ManagerListener'])]
 #[UniqueEntity('email')]
 class Manager implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -19,6 +20,7 @@ class Manager implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank]
     #[Assert\Email]
     private ?string $email = null;
 
@@ -26,15 +28,15 @@ class Manager implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank]
     private array $roles = ['ROLE_SUPER_ADMIN'];
 
-    /**
-     * @var string The hashed password
-     */
     #[ORM\Column]
+    private ?string $password = 'apiPassword';
+
+    #[Assert\NotBlank]
     #[Assert\Regex(['pattern' => '/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?([^\w\s]|[_])).{8,}$/',
         'match' => true,
         'message' => 'The password must contain at least eight characters, including upper and lower case letters, a number and a symbol'
     ])]
-    private ?string $password = null;
+    private ?string $plainPassword = null;
 
     public function getId(): ?int
     {
@@ -104,5 +106,16 @@ class Manager implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+        return $this;
     }
 }
