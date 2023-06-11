@@ -21,9 +21,9 @@ class JWTCreatedListener
         $client = $clientRepository->findOneBy(['email'=>$request['username']]);
 
         if (isset($client) && $client instanceof Client){
-            return [$this->isClient = true, $this->authorizedUntil = $client->getAuthorizedUntil()];
+            [$this->isClient = true, $this->authorizedUntil = $client->getAuthorizedUntil()];
         }else{
-            return $this->isClient = false;
+            $this->isClient = false;
         }
     }
 
