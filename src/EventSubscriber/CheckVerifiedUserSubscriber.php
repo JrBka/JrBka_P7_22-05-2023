@@ -11,7 +11,7 @@ class CheckVerifiedUserSubscriber implements EventSubscriberInterface
     /**
      * This function refuses the connection if the client linked to the user no longer has permission to access the API
      */
-    public function onCheckPassport(CheckPassportEvent $event)
+    public function onCheckPassport(CheckPassportEvent $event):void
     {
         $user = $event->getPassport()->getUser();
         $role = $user->getRoles();
