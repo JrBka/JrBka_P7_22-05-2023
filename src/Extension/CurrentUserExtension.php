@@ -13,8 +13,11 @@ use Symfony\Bundle\SecurityBundle\Security;
 final class CurrentUserExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
 
-    public function __construct(private readonly Security $security)
+    private $security;
+
+    public function __construct(Security $security)
     {
+        $this->security = $security;
     }
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = []): void
@@ -27,6 +30,9 @@ final class CurrentUserExtension implements QueryCollectionExtensionInterface, Q
         $this->addWhere($queryBuilder, $resourceClass);
     }
 
+    /**
+     * This function adds a "where" to the sql query to display only users linked to the authenticated client
+     */
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass): void
     {
         if (User::class !== $resourceClass || $this->security->isGranted('ROLE_SUPER_ADMIN') || null === $user = $this->security->getUser()) {

@@ -18,17 +18,16 @@ class UserListener
         $this->hasher = $hasher;
     }
 
-    public function prePersist(User $user){
+    /**
+     * Hashes the password and sets the client before entity persistence
+     */
+    public function prePersist(User $user):void
+    {
         $client = $this->security->getUser();
 
         if (isset($client) && $client instanceof Client){
             $user->setClient($client);
         }
-        $this->encodePassword($user);
-    }
-
-    public function preUpdate(User $user):void
-    {
         $this->encodePassword($user);
     }
 

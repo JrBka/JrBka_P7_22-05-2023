@@ -10,6 +10,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class ExceptionSubscriber implements EventSubscriberInterface
 {
+
+    /**
+     * This function sets the status for http exception. If the exception isn't an http exception sets the statut 500 by default
+     */
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
@@ -21,7 +25,7 @@ class ExceptionSubscriber implements EventSubscriberInterface
             ];
         } else {
             $data = [
-                'status' => 500, // Le status n'existe pas car ce n'est pas une exception HTTP, donc on met 500 par défaut.
+                'status' => 500,
                 'message' => $exception->getMessage()
             ];
         }

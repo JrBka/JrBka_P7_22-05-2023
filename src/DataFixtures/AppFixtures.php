@@ -57,7 +57,7 @@ class AppFixtures extends Fixture
                 ->setPrice('980 €')
                 ->setBrand('samsung')
                 ->setStorage('64GB')
-                ->setDescription('Le Samsung Galaxy S10 est le flagship de Samsung pour 2019. Il est équipé 
+                ->setDescription('Le Samsung Galaxy S'.$i.' est le flagship de Samsung pour 2019. Il est équipé 
                 d\'un SoC Samsung Exynos 9820 gravé en 8 nm, d\'un triple capteur et d\'un nouvel écran sans bord avec la caméra logée dans une bulle.');
 
             $manager->persist($mobile);
@@ -69,7 +69,7 @@ class AppFixtures extends Fixture
                 ->setPrice('980 €')
                 ->setBrand('apple')
                 ->setStorage('64GB')
-                ->setDescription('L\'écran de l\'iPhone 12 a des angles arrondis qui suivent la ligne élégante 
+                ->setDescription('L\'écran de l\'iPhone '.$i.' a des angles arrondis qui suivent la ligne élégante 
                 de l\'appareil et s\'inscrivent dans un rectangle standard. Si l\'on mesure ce rectangle, l\'écran affiche
                  une diagonale de 6,06 pouces (la zone d\'affichage réelle est moindre)');
 

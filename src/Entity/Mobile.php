@@ -38,17 +38,17 @@ class Mobile
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(normalizer: 'trim')]
     #[Groups(['mobileDetails','mobilesList','mobileDetailsForPostPatchPut'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(normalizer: 'trim')]
     #[Groups(['mobileDetails','mobilesList','mobileDetailsForPostPatchPut'])]
     private ?string $brand = null;
 
     #[ORM\Column]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(normalizer: 'trim')]
     #[Groups(['mobileDetails','mobileDetailsForPostPatchPut'])]
     private ?string $price = null;
 
@@ -61,12 +61,12 @@ class Mobile
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(normalizer: 'trim')]
     #[Groups(['mobileDetails','mobileDetailsForPostPatchPut'])]
     private ?string $storage = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(normalizer: 'trim')]
     #[Groups(['mobileDetails','mobileDetailsForPostPatchPut'])]
     private ?string $description = null;
 

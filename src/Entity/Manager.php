@@ -20,18 +20,18 @@ class Manager implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(normalizer: 'trim')]
     #[Assert\Email]
     private ?string $email = null;
 
     #[ORM\Column]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(normalizer: 'trim')]
     private array $roles = ['ROLE_SUPER_ADMIN'];
 
     #[ORM\Column]
     private ?string $password = 'apiPassword';
 
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(normalizer: 'trim')]
     #[Assert\Regex(['pattern' => '/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?([^\w\s]|[_])).{8,}$/',
         'match' => true,
         'message' => 'The password must contain at least eight characters, including upper and lower case letters, a number and a symbol'

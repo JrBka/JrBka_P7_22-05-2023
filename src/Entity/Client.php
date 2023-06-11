@@ -24,9 +24,9 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new Get(normalizationContext: ['groups'=> ['clientDetails']]),
         new GetCollection(paginationItemsPerPage: 10, paginationClientItemsPerPage: true, normalizationContext: ['groups'=> ['clientsList']]),
-        new Patch(normalizationContext: ['groups'=> ['clientAuthorisation']], denormalizationContext: ['groups'=> ['clientAuthorisation']]),
+        new Patch(normalizationContext: ['groups'=> ['clientAuthorisation']], denormalizationContext: ['groups'=> ['clientAuthorisation']], validationContext: ['groups'=>['clientAuthorisation']]),
         new Post(normalizationContext: ['groups'=> ['clientDetails']], denormalizationContext: ['groups'=> ['clientDetailsForPost']]),
-        new Put(normalizationContext: ['groups'=> ['clientDetails']], denormalizationContext: ['groups'=> ['clientDetailsForPut']]),
+        new Put(normalizationContext: ['groups'=> ['clientDetails']], denormalizationContext: ['groups'=> ['clientDetailsForPut']], validationContext: ['groups'=>['contextValidationForPut']],),
         new Delete()
     ],
     security: "is_granted('ROLE_SUPER_ADMIN')"
@@ -42,25 +42,25 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Assert\NotBlank]
-    #[Assert\Email]
+    #[Assert\Email(groups: ['contextValidationForPut'])]
+    #[Assert\NotBlank(normalizer: 'trim',groups: ['contextValidationForPut'])]
     #[Groups(['clientDetails','clientDetailsForPut','clientDetailsForPost','clientsList'])]
     private ?string $email = null;
 
     #[ORM\Column]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(normalizer: 'trim',groups: ['contextValidationForPut'])]
     #[Groups(['clientDetails','clientDetailsForPut'])]
     private array $roles = ['ROLE_ADMIN'];
 
     #[ORM\Column]
     private ?string $password = 'apiPassword';
 
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(normalizer: 'trim')]
     #[Assert\Regex(['pattern' => '/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?([^\w\s]|[_])).{8,}$/',
         'match' => true,
         'message' => 'The password must contain at least eight characters, including upper and lower case letters, a number and a symbol'
     ])]
-    #[Groups(['userDetails','userDetailsForPost'])]
+    #[Groups(['clientDetails','clientDetailsForPost','clientDetailsForPut'])]
     private ?string $plainPassword = null;
 
     #[ORM\Column]
@@ -72,7 +72,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $users;
 
     #[ORM\Column()]
-    #[Groups(['clientAuthorisation','clientDetails','clientsList'])]
+    #[Groups(['clientAuthorisation','clientDetails','clientsList', 'contextValidationForPut'])]
     private \DateTimeImmutable $authorizedUntil ;
 
     public function __construct()

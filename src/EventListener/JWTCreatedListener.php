@@ -2,6 +2,7 @@
 
 namespace App\EventListener;
 
+use App\Entity\Client;
 use App\Repository\ClientRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -19,13 +20,16 @@ class JWTCreatedListener
         $request = $this->requestStack->getCurrentRequest()->toArray();
         $client = $clientRepository->findOneBy(['email'=>$request['username']]);
 
-        if ($client){
+        if (isset($client) && $client instanceof Client){
             return [$this->isClient = true, $this->authorizedUntil = $client->getAuthorizedUntil()];
         }else{
             return $this->isClient = false;
         }
     }
 
+    /**
+     * This function sets the token expiration according to the date of access authorization if it's a client who connects
+     */
     public function onJWTCreated(JWTCreatedEvent $event):void
     {
         if ($this->isClient){

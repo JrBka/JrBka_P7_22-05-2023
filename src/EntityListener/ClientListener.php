@@ -14,10 +14,17 @@ class ClientListener
         $this->hasher = $hasher;
     }
 
-    public function prePersist(Client $client){
+    /**
+     * Hashes password before entity persistence
+     */
+    public function prePersist(Client $client):void
+    {
         $this->encodePassword($client);
     }
 
+    /**
+     * Hashes password before entity update
+     */
     public function preUpdate(Client $client):void
     {
         $this->encodePassword($client);

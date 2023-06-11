@@ -14,10 +14,17 @@ class ManagerListener
         $this->hasher = $hasher;
     }
 
-    public function prePersist(Manager $Manager){
+    /**
+     * Hashes password before entity persistence
+     */
+    public function prePersist(Manager $Manager):void
+    {
         $this->encodePassword($Manager);
     }
 
+    /**
+     * Hashes password before entity update
+     */
     public function preUpdate(Manager $Manager):void
     {
         $this->encodePassword($Manager);

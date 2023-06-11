@@ -1,18 +1,17 @@
 <?php
 
 namespace App\EventSubscriber;
-use App\Repository\ClientRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Security\Http\Event\CheckPassportEvent;
 
 class CheckVerifiedUserSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private readonly ClientRepository $clientRepository)
-    {
-    }
 
-    public function onCheckPassport(CheckPassportEvent $event,)
+    /**
+     * This function refuses the connection if the client linked to the user no longer has permission to access the API
+     */
+    public function onCheckPassport(CheckPassportEvent $event)
     {
         $user = $event->getPassport()->getUser();
         $role = $user->getRoles();
@@ -24,7 +23,7 @@ class CheckVerifiedUserSubscriber implements EventSubscriberInterface
         }
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents():array
     {
         return [
             CheckPassportEvent::class => 'onCheckPassport',
