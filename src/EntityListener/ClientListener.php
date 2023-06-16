@@ -3,14 +3,19 @@
 namespace App\EntityListener;
 
 use App\Entity\Client;
+use App\Entity\Manager;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class ClientListener
 {
+    private $security;
     private UserPasswordHasherInterface $hasher;
 
-    public function __construct(UserPasswordHasherInterface $hasher)
+    public function __construct(Security $security, UserPasswordHasherInterface $hasher)
     {
+        $this->security = $security;
         $this->hasher = $hasher;
     }
 
@@ -19,6 +24,13 @@ class ClientListener
      */
     public function prePersist(Client $client):void
     {
+        $manager = $this->security->getUser();
+
+        if (isset($manager) && $manager instanceof Manager){
+            $client->setManager($manager);
+        }else{
+            throw new JsonException('Only managers can add new clients to their list');
+        }
         $this->encodePassword($client);
     }
 

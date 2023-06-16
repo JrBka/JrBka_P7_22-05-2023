@@ -5,6 +5,7 @@ namespace App\EntityListener;
 use App\Entity\Client;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserListener
@@ -27,6 +28,8 @@ class UserListener
 
         if (isset($client) && $client instanceof Client){
             $user->setClient($client);
+        }else{
+            throw new JsonException('Only clients can add new users to their list');
         }
         $this->encodePassword($user);
     }

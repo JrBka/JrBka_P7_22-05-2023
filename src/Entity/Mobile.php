@@ -20,8 +20,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\EntityListeners(['App\EntityListener\MobileListener'])]
 #[ApiResource(
     operations: [
-        new Get(normalizationContext: ['groups' => ['mobileDetails']], security: "is_granted('ROLE_USER') or is_granted('ROLE_ADMIN')"),
-        new GetCollection(paginationItemsPerPage: 10, paginationClientItemsPerPage: true, normalizationContext: ['groups' => ['mobilesList']], security: "is_granted('ROLE_USER') or is_granted('ROLE_ADMIN')"),
+        new Get(normalizationContext: ['groups' => ['mobileDetails']], security: "is_granted('ROLE_USER')"),
+        new GetCollection(paginationItemsPerPage: 10, paginationClientItemsPerPage: true, normalizationContext: ['groups' => ['mobilesList']], security: "is_granted('ROLE_USER')"),
         new Post(normalizationContext: ['groups'=> ['mobileDetails']], denormalizationContext: ['groups' => ['mobileDetailsForPostPatchPut']], security: "is_granted('ROLE_SUPER_ADMIN')"),
         new Patch(normalizationContext: ['groups'=> ['mobileDetails']], denormalizationContext: ['groups' => ['mobileDetailsForPostPatchPut']], security: "is_granted('ROLE_SUPER_ADMIN')"),
         new Put( normalizationContext: ['groups'=> ['mobileDetails']], denormalizationContext: ['groups' => ['mobileDetailsForPostPatchPut']], security: "is_granted('ROLE_SUPER_ADMIN')"),
@@ -69,6 +69,10 @@ class Mobile
     #[Assert\NotBlank(normalizer: 'trim')]
     #[Groups(['mobileDetails','mobileDetailsForPostPatchPut'])]
     private ?string $description = null;
+
+    #[ORM\ManyToOne(inversedBy: 'mobile')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Manager $manager = null;
 
     public function __construct()
     {
@@ -160,6 +164,18 @@ class Mobile
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getManager(): ?Manager
+    {
+        return $this->manager;
+    }
+
+    public function setManager(?Manager $manager): static
+    {
+        $this->manager = $manager;
 
         return $this;
     }

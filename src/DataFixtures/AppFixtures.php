@@ -23,6 +23,7 @@ class AppFixtures extends Fixture
         $client1->setEmail('mobile-shop@admin.com')
             ->setPlainPassword('Password123$')
             ->setRoles(["ROLE_ADMIN"])
+            ->setManager($manager1)
             ->setAuthorizedUntil(new \DateTimeImmutable('+30days'));
         $manager->persist($client1);
 
@@ -30,6 +31,7 @@ class AppFixtures extends Fixture
         $client2->setEmail('mobileAvenue@admin.com')
             ->setPlainPassword('Password123$')
             ->setRoles(["ROLE_ADMIN"])
+            ->setManager($manager1)
             ->setAuthorizedUntil(new \DateTimeImmutable('+30days'));
         $manager->persist($client2);
 
@@ -57,6 +59,7 @@ class AppFixtures extends Fixture
                 ->setPrice('980 €')
                 ->setBrand('samsung')
                 ->setStorage('64GB')
+                ->setManager($manager1)
                 ->setDescription('Le Samsung Galaxy S'.$i.' est le flagship de Samsung pour 2019. Il est équipé 
                 d\'un SoC Samsung Exynos 9820 gravé en 8 nm, d\'un triple capteur et d\'un nouvel écran sans bord avec la caméra logée dans une bulle.');
 
@@ -69,6 +72,7 @@ class AppFixtures extends Fixture
                 ->setPrice('980 €')
                 ->setBrand('apple')
                 ->setStorage('64GB')
+                ->setManager($manager1)
                 ->setDescription('L\'écran de l\'iPhone '.$i.' a des angles arrondis qui suivent la ligne élégante 
                 de l\'appareil et s\'inscrivent dans un rectangle standard. Si l\'on mesure ce rectangle, l\'écran affiche
                  une diagonale de 6,06 pouces (la zone d\'affichage réelle est moindre)');

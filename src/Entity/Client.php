@@ -24,9 +24,9 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new Get(normalizationContext: ['groups'=> ['clientDetails']]),
         new GetCollection(paginationItemsPerPage: 10, paginationClientItemsPerPage: true, normalizationContext: ['groups'=> ['clientsList']]),
-        new Patch(normalizationContext: ['groups'=> ['clientAuthorisation']], denormalizationContext: ['groups'=> ['clientAuthorisation']], validationContext: ['groups'=>['clientAuthorisation']]),
+        new Patch(normalizationContext: ['groups'=> ['clientAuthorisation']], denormalizationContext: ['groups'=> ['clientAuthorisation']]),
         new Post(normalizationContext: ['groups'=> ['clientDetails']], denormalizationContext: ['groups'=> ['clientDetailsForPost']]),
-        new Put(normalizationContext: ['groups'=> ['clientDetails']], denormalizationContext: ['groups'=> ['clientDetailsForPut']], validationContext: ['groups'=>['contextValidationForPut']],),
+        new Put(normalizationContext: ['groups'=> ['clientDetails']], denormalizationContext: ['groups'=> ['clientDetailsForPut']]),
         new Delete()
     ],
     security: "is_granted('ROLE_SUPER_ADMIN')"
@@ -42,13 +42,13 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Assert\Email(groups: ['contextValidationForPut'])]
-    #[Assert\NotBlank(normalizer: 'trim',groups: ['contextValidationForPut'])]
+    #[Assert\Email]
+    #[Assert\NotBlank(normalizer: 'trim')]
     #[Groups(['clientDetails','clientDetailsForPut','clientDetailsForPost','clientsList'])]
     private ?string $email = null;
 
     #[ORM\Column]
-    #[Assert\NotBlank(normalizer: 'trim',groups: ['contextValidationForPut'])]
+    #[Assert\NotBlank(normalizer: 'trim')]
     #[Groups(['clientDetails','clientDetailsForPut'])]
     private array $roles = ['ROLE_ADMIN'];
 
@@ -72,8 +72,12 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $users;
 
     #[ORM\Column()]
-    #[Groups(['clientAuthorisation','clientDetails','clientsList', 'contextValidationForPut'])]
+    #[Groups(['clientAuthorisation','clientDetails','clientsList'])]
     private \DateTimeImmutable $authorizedUntil ;
+
+    #[ORM\ManyToOne(inversedBy: 'client')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Manager $manager = null;
 
     public function __construct()
     {
@@ -221,6 +225,18 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPlainPassword(?string $plainPassword): self
     {
         $this->plainPassword = $plainPassword;
+        return $this;
+    }
+
+    public function getManager(): ?Manager
+    {
+        return $this->manager;
+    }
+
+    public function setManager(?Manager $manager): static
+    {
+        $this->manager = $manager;
+
         return $this;
     }
 }

@@ -18,10 +18,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
     operations: [
-        new Get(normalizationContext: ['groups'=> ['userDetails']], security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN')"),
-        new GetCollection(paginationItemsPerPage: 10, paginationClientItemsPerPage: true, normalizationContext: ['groups' => ['usersList']], security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN')"),
+        new Get(normalizationContext: ['groups'=> ['userDetails']], security: "is_granted('ROLE_ADMIN')"),
+        new GetCollection(paginationItemsPerPage: 10, paginationClientItemsPerPage: true, normalizationContext: ['groups' => ['usersList']], security: "is_granted('ROLE_ADMIN')"),
         new Post(normalizationContext: ['groups'=> ['userDetails']], denormalizationContext: ['groups'=> ['userDetailsForPost']], security: "is_granted('ROLE_ADMIN')"),
-        new Delete(security: "is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN')")
+        new Delete(security: "is_granted('ROLE_ADMIN')")
     ],
 )]
 #[UniqueEntity('email')]
@@ -47,7 +47,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     #[ORM\Column]
-    private ?string $password = 'apiPassword';
+    private ?string $password = null ;
 
     #[Assert\NotBlank(normalizer: 'trim')]
     #[Assert\Regex(['pattern' => '/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?([^\w\s]|[_])).{8,}$/',

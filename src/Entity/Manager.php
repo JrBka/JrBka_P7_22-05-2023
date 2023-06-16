@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ManagerRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -37,6 +39,18 @@ class Manager implements UserInterface, PasswordAuthenticatedUserInterface
         'message' => 'The password must contain at least eight characters, including upper and lower case letters, a number and a symbol'
     ])]
     private ?string $plainPassword = null;
+
+    #[ORM\OneToMany(mappedBy: 'manager', targetEntity: Client::class, orphanRemoval: true)]
+    private Collection $client;
+
+    #[ORM\OneToMany(mappedBy: 'manager', targetEntity: Mobile::class, orphanRemoval: true)]
+    private Collection $mobile;
+
+    public function __construct()
+    {
+        $this->client = new ArrayCollection();
+        $this->mobile = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -116,6 +130,66 @@ class Manager implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPlainPassword(?string $plainPassword): self
     {
         $this->plainPassword = $plainPassword;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Client>
+     */
+    public function getClient(): Collection
+    {
+        return $this->client;
+    }
+
+    public function addClient(Client $client): static
+    {
+        if (!$this->client->contains($client)) {
+            $this->client->add($client);
+            $client->setManager($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClient(Client $client): static
+    {
+        if ($this->client->removeElement($client)) {
+            // set the owning side to null (unless already changed)
+            if ($client->getManager() === $this) {
+                $client->setManager(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Mobile>
+     */
+    public function getMobile(): Collection
+    {
+        return $this->mobile;
+    }
+
+    public function addMobile(Mobile $mobile): static
+    {
+        if (!$this->mobile->contains($mobile)) {
+            $this->mobile->add($mobile);
+            $mobile->setManager($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMobile(Mobile $mobile): static
+    {
+        if ($this->mobile->removeElement($mobile)) {
+            // set the owning side to null (unless already changed)
+            if ($mobile->getManager() === $this) {
+                $mobile->setManager(null);
+            }
+        }
+
         return $this;
     }
 }
