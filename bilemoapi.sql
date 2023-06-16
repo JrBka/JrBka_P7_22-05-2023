@@ -18,10 +18,10 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `bilmoapi`
+-- Base de données : `bilemoapi`
 --
-CREATE DATABASE IF NOT EXISTS `bilmoapi` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `bilmoapi`;
+CREATE DATABASE IF NOT EXISTS `bilemoapi` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `bilemoapi`;
 
 -- --------------------------------------------------------
 
