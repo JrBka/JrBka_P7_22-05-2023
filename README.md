@@ -22,4 +22,6 @@ Une fois le projet installé et configuré, lancez XAMPP et importez-y la base d
 
 Rendez-vous dans votre terminal et entrez : 'symfony serve'.
 
-Le projet est en place, rendez-vous dans votre navigateur à l'adresse http://localhost:8000/api pour l'utiliser.
+Le projet est en place, rendez-vous dans votre navigateur à l'adresse http://localhost:8000/api pour l'utilisé.
+
+PS: pour les besoins du projet les mots de passe utilisé sont Password123$.
